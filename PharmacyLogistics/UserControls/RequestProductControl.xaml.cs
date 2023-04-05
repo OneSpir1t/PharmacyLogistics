@@ -22,20 +22,32 @@ namespace PharmacyLogistics.UserControls
     public partial class RequestProductControl : UserControl
     {
         Requestproduct Requestproduct { get; set; }
+        private static RequestProductControl RPC { get; set; }
         public RequestProductControl(Requestproduct requestproduct)
         {
+            RPC = this;
             InitializeComponent();
             Requestproduct = requestproduct;
-            ReqProduct_Label.Content = string.Join(" ", requestproduct.Product.Article, requestproduct.Product.Name,
-            requestproduct.Product.ReleaseForm.Name, requestproduct.Product.Dose, requestproduct.Product.Quantityinthepackage + " шт.");
-            Request request = AptContext.aptContext.Requests.FirstOrDefault(r => r.Id == requestproduct.RequestId);
-            if(request.StatusId != 1)
+            UpdateReqProd();
+        }
+
+        private void UpdateReqProd()
+        {
+            ReqProduct_Label.Content = string.Join(" ", Requestproduct.Product.Article, Requestproduct.Product.Name,
+            Requestproduct.Product.ReleaseForm.Name, Requestproduct.Product.Dose, Requestproduct.Product.Quantityinthepackage + " шт.");
+            Request request = AptContext.aptContext.Requests.FirstOrDefault(r => r.Id == Requestproduct.RequestId);
+            if (request.StatusId != 1)
             {
                 MinusAmount_Button.Visibility = Visibility.Hidden;
                 PlusAmount_Button.Visibility = Visibility.Hidden;
                 Amount_TextBox.IsEnabled = false;
             }
-            Amount_TextBox.Text = requestproduct.Amount.ToString();
+            Amount_TextBox.Text = Requestproduct.Amount.ToString();
+        }
+
+        public static void Upd()
+        {
+            RPC.UpdateReqProd();
         }
 
         private void MinusAmount_Button_Click(object sender, RoutedEventArgs e)
@@ -52,14 +64,12 @@ namespace PharmacyLogistics.UserControls
                 if (msg == MessageBoxResult.Yes)
                 {
                     int id = Requestproduct.RequestId;
+                    Request request = AptContext.aptContext.Requests.FirstOrDefault (r => r.Id == id);
                     AptContext.aptContext.Remove(Requestproduct);                   
                     AptContext.aptContext.SaveChanges();
                     Requestproduct requestproduct = AptContext.aptContext.Requestproducts.FirstOrDefault(rp => rp.RequestId == id);
-                    if (requestproduct == null)
-                    {
-                        MainWindow.Upd();
-                    }
-                    RequestControl.Upd();
+                    MainWindow.Upd();
+
 
                 }
             }

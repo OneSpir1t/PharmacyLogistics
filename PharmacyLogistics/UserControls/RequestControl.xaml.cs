@@ -54,21 +54,18 @@ namespace PharmacyLogistics.UserControls
                 
             }
             UpdateReqProduct();
-        }
-
-        public static void Upd()
-        {
-            RC.UpdateReqProduct();
-        }
+        }       
 
         private void UpdateReqProduct()
         {
-            if(Request != null && User.UserRoleId == 3)
+            
+            if(User.UserRoleId == 3)
             {
                 ReqId_Label.Content = "Заявка № " + Request.Id;
             }
             else
             {
+                ReqManager_Combobox.SelectedItem = Request.User;
                 ReqId_Label.Content = "Заявка № " + Request.Id + " от аптеки № " + Request.PharmacyId;
             }
             ReqStatus_Label.Content = "Статус: " + Request.Status.Name;
@@ -76,14 +73,13 @@ namespace PharmacyLogistics.UserControls
             {
                 ReqSend_Button.Visibility = Visibility.Hidden;
             }
-            ReqManager_Combobox.SelectedItem = Request.User;
             ReqProduct_ListView.Items.Clear();
             displayRequestProducts = AptContext.aptContext.Requestproducts.Where(rp => rp.Request == Request).ToList();
             foreach (Requestproduct requestproduct in displayRequestProducts)
             {
                 ReqProduct_ListView.Items.Add(new RequestProductControl(requestproduct) {Width = 700});
             }
-            if(displayRequestProducts.Count == 0)
+            if (displayRequestProducts.Count == 0)
             {
                 ShowReqProd_Button.IsEnabled = false;
                 ProductView_Grid.Height = 300;

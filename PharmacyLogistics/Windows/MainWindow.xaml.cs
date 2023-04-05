@@ -221,7 +221,6 @@ namespace PharmacyLogistics
                 if (displayRequest.Count > 0)
                 {
                     NotFoundRequest_Label.Visibility = Visibility.Hidden;
-                    Request_ListView.Items.Clear();
                     foreach (Request request in displayRequest)
                     {
                         Request_ListView.Items.Add(new RequestControl(request, User) { Width = GetNormalWidth() });

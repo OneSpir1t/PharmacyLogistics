@@ -136,7 +136,7 @@ namespace PharmacyLogistics.UserControls
                     AptContext.aptContext.Add(requestproduct);
                     AptContext.aptContext.SaveChanges();
                     MessageBox.Show("Товар добавлен в заявку", "Уведомление");
-                    RequestControl.Upd();
+                    MainWindow.Upd();
                 }
                 else
                 {
@@ -163,7 +163,7 @@ namespace PharmacyLogistics.UserControls
                     AptContext.aptContext.SaveChanges();
                     MessageBox.Show("Товар успешно добавлен в заявку");
                     MainWindow.Upd();
-                    RequestControl.Upd();
+                    
                 }
             }
         }
