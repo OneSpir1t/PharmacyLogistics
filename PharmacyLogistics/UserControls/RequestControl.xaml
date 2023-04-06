@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:PharmacyLogistics.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="800">
-    <Border x:Name="PhReq_Border" BorderBrush="Black" BorderThickness="2" CornerRadius="5" Height="200">
+    <Border x:Name="PhReq_Border" BorderBrush="Black" BorderThickness="2" CornerRadius="5" Height="500">
         <StackPanel>
             <Label x:Name="ReqId_Label" Content="Заявка №"/>
             <Label x:Name="ReqStatus_Label"/>
@@ -27,9 +27,9 @@
             </StackPanel>
             <StackPanel x:Name="PharmacyManager_Stackpanel">
                 <Grid/>
-                <Button x:Name="ShowReqProd_Button" HorizontalAlignment="Center" Content="Показать товары" Margin="5,5,5,5" Click="ShowReqProd_Button_Click"/>
+                <Button x:Name="ShowReqProd_Button" HorizontalAlignment="Center" Content="Cкрыть" Margin="5,5,5,5" Click="ShowReqProd_Button_Click"/>
                 <GroupBox Width="750" Margin="10,0,10,0">
-                    <Grid x:Name="ProductView_Grid" Height="0">
+                    <Grid x:Name="ProductView_Grid" Height="300">
                         <ListView Margin="5,5,5,5" ScrollViewer.CanContentScroll="False" x:Name="ReqProduct_ListView"/>
                     </Grid>
                 </GroupBox>
