@@ -12,6 +12,7 @@ namespace PharmacyLogistics.Entities
         }
 
         public static AptContext aptContext { get; private set; } = new AptContext();
+
         public AptContext(DbContextOptions<AptContext> options)
             : base(options)
         {

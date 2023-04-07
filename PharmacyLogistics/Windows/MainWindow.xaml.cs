@@ -1,7 +1,11 @@
 ﻿using Castle.Core.Internal;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.Win32;
 using PharmacyLogistics.Entities;
 using PharmacyLogistics.UserControls;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
@@ -11,12 +15,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
+using WinForms = System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Diagnostics;
 
 namespace PharmacyLogistics
 {
@@ -177,16 +181,16 @@ namespace PharmacyLogistics
             }
             if(User.UserRoleId == 2)
             {
-                displayRequest = displayRequest.Where(r => r.User == User).ToList();
+                displayRequest = displayRequest.Where(r => r.User == User && r.StatusId < 5).ToList();
                 CreateAkt_Button.Visibility = Visibility.Visible;
                 switch (SearchFilter_Combobox.SelectedIndex)
                 {
 
                     case 1:
-                        displayRequest = displayRequest.Where(r => r.StatusId == 2).ToList();
+                        displayRequest = displayRequest.Where(r => r.StatusId == 3).ToList();
                         break;
                     case 2:
-                        displayRequest = displayRequest.Where(r => r.StatusId == 3).ToList();
+                        displayRequest = displayRequest.Where(r => r.StatusId == 4).ToList();
                         break;
                 }
                 if (!string.IsNullOrEmpty(SearchReqPharmacy_TextBox.Text))
@@ -317,6 +321,8 @@ namespace PharmacyLogistics
                 }
                 else
                 {
+                    currentProduct.Supplier = (Supplier)ProdSupplier_Combobox.SelectedItem;
+                    currentProduct.ReleaseForm = (Releaseform)ProdReleaseForm_Combobox.SelectedItem;
                     AptContext.aptContext.SaveChanges();
                     UpdateProduct();
                     BackToProd_Button_Click(sender, e);
@@ -623,6 +629,156 @@ namespace PharmacyLogistics
         private void SearchReqPharmacy_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             UpdateRequest();
+        }
+
+        private void CreateAkt_Button_Click(object sender, RoutedEventArgs e)
+        {                        
+            WinForms.FolderBrowserDialog fbd = new WinForms.FolderBrowserDialog();
+            List<Request> requests = new List<Request>();
+            requests = RequestControl.AktReq;
+            if (RequestControl.AktReq.Count() > 0)
+            {                
+                if (fbd.ShowDialog() == WinForms.DialogResult.OK)
+                {
+                    string path = fbd.SelectedPath + "/";                                       
+                    foreach (Supplier supplier in AptContext.aptContext.Suppliers.ToList())
+                    {
+                        List<Requestproduct> requestproduct = new List<Requestproduct>();
+                        for(int i = 0; i < requests.Count; i++)
+                        {
+                            for(int j = 0; j < requests[i].Requestproducts.Count; j++)
+                            {
+                                if (supplier == requests[i].Requestproducts.ElementAt(j).Product.Supplier)
+                                {
+                                    bool flag = true;
+                                    Request request = AptContext.aptContext.Requests.FirstOrDefault(r => r.Id == requests[i].Id);
+                                    request.Status = AptContext.aptContext.Statuses.FirstOrDefault(s => s.Id == 4);
+                                    AptContext.aptContext.SaveChanges();
+                                    requestproduct.Add(requests[i].Requestproducts.ElementAt(j));
+                                }
+
+                                
+                            }
+                        }
+                        for (int i = 0; i < requestproduct.Count; i++)
+                        {   
+                            for (int j = 1; j < requestproduct.Count; j++)
+                            {
+
+                                if (requestproduct[i].Product == requestproduct[j].Product && i != j)
+                                {
+                                    requestproduct[i].Amount = requestproduct[i].Amount + requestproduct[j].Amount;
+                                    requestproduct.Remove(requestproduct[j]);
+                                    i = 0; j = 0;
+                                }
+                                
+                            }      
+                            
+                        }
+                        CreateDocument(requestproduct, path);
+                    }                
+                }
+            }
+            UpdateRequest();
+        }
+
+        private void CreateDocument(List<Requestproduct> requestproducts, string path)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            string[] files = Directory.GetFiles(path);
+            int number = 0;
+            if (files.Length > 0)
+            {
+                for (int i = 0; files.Length > i; i++)
+                {
+                    number++;
+                }
+            }
+            else
+            {
+                number = 1;
+            }
+            string filename = Path.GetRandomFileName() + ".pdf";
+            string ttf = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "ARIAL.TTF");
+            var baseFont = BaseFont.CreateFont(ttf, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            var font = new iTextSharp.text.Font(baseFont, iTextSharp.text.Font.DEFAULTSIZE, iTextSharp.text.Font.NORMAL);
+            Document doc = new Document(PageSize.LETTER, 40f, 40f, 60f, 60f);
+            PdfWriter.GetInstance(doc, new FileStream(path + filename, FileMode.Create));
+            doc.Open();
+            Paragraph p1 = new Paragraph($"Утверждаю", font);
+            p1.Alignment = Element.ALIGN_RIGHT;
+            doc.Add(p1);
+            User user = AptContext.aptContext.Users.FirstOrDefault(u => u.UserRoleId == 1);
+            Paragraph p2 = new Paragraph($"{string.Join(" ", user.Surname, user.Name, user.Patryonomic)}", font);
+            p2.Alignment = Element.ALIGN_RIGHT;
+            doc.Add(p2);
+            Paragraph p3 = new Paragraph($"Акт приёма-передачи №{number}", font);
+            p3.Alignment = Element.ALIGN_CENTER;
+            doc.Add(p3);
+            int year = Int32.Parse(DateTime.Now.ToString("yyyy"));
+            int month = Int32.Parse(DateTime.Now.ToString("MM"));
+            int day = Int32.Parse(DateTime.Now.ToString("dd"));
+            Paragraph p4 = new Paragraph($"от {new DateOnly(year, month, day)}", font);
+            p4.Alignment = Element.ALIGN_CENTER;
+            doc.Add(p4);
+            Supplier supplier = AptContext.aptContext.Suppliers.FirstOrDefault(s => s.Id == requestproducts[0].Product.SupplierId);
+            Paragraph p5 = new Paragraph($"Поставщик: {supplier.Name}", font);
+            p5.Alignment = Element.ALIGN_LEFT;
+            doc.Add(p5);
+            Paragraph p6 = new Paragraph($"ИНН: {supplier.Inn}", font);
+            p6.Alignment = Element.ALIGN_LEFT;
+            doc.Add(p6);
+            PdfPTable table = new PdfPTable(5);
+            table.SpacingBefore = 10f;
+            table.SpacingAfter = 10f;
+            table.AddCell(new PdfPCell(new Phrase("№ п/п", font)));
+            table.AddCell(new PdfPCell(new Phrase("Наименование товара", font)));
+            table.AddCell(new PdfPCell(new Phrase("Количество товара", font)));
+            table.AddCell(new PdfPCell(new Phrase("Цена за единицу", font)));
+            table.AddCell(new PdfPCell(new Phrase("Стоимость товара", font)));
+            int sum = 0;
+            int count = 0;
+            for (int i = 0; i <= requestproducts.Count - 1; i++)
+            {
+                table.AddCell(new PdfPCell(new Phrase($"{i+1}", font)));
+                table.AddCell(new PdfPCell(new Phrase($"{requestproducts[i].Product.Name}", font)));
+                table.AddCell(new PdfPCell(new Phrase($"{requestproducts[i].Amount}", font)));
+                table.AddCell(new PdfPCell(new Phrase($"{requestproducts[i].Product.Cost}", font)));
+                table.AddCell(new PdfPCell(new Phrase($"{requestproducts[i].Amount * requestproducts[i].Product.Cost}", font)));
+                sum += requestproducts[i].Amount * requestproducts[i].Product.Cost;
+                count += requestproducts[i].Amount;
+
+            }
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase("Общее кол-во", font)));
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase("Итого:", font)));
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase($"{count}", font)));
+            table.AddCell(new PdfPCell(new Phrase("", font)));
+            table.AddCell(new PdfPCell(new Phrase($"{sum}", font)));
+            doc.Add(table);
+            Paragraph p7 = new Paragraph($"Подпись поставщика:____________                                  Подпись управляющего:____________", font);
+            p7.Alignment = Element.ALIGN_CENTER;
+            doc.Add(p7);
+            doc.Close();                               
+            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });      
+            while(File.Exists(path + filename))
+            {
+                break;
+            }
+        }
+
+        private void ProdSupplier_Combobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ProdReleaseForm_Combobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

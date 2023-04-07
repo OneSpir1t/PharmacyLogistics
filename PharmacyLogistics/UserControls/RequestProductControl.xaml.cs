@@ -36,7 +36,7 @@ namespace PharmacyLogistics.UserControls
             ReqProduct_Label.Content = string.Join(" ", Requestproduct.Product.Article, Requestproduct.Product.Name,
             Requestproduct.Product.ReleaseForm.Name, Requestproduct.Product.Dose, Requestproduct.Product.Quantityinthepackage + " шт.");
             Request request = AptContext.aptContext.Requests.FirstOrDefault(r => r.Id == Requestproduct.RequestId);
-            if (request.StatusId != 1)
+            if (request.StatusId > 3)
             {
                 MinusAmount_Button.Visibility = Visibility.Hidden;
                 PlusAmount_Button.Visibility = Visibility.Hidden;
@@ -60,17 +60,21 @@ namespace PharmacyLogistics.UserControls
             }
             else
             {
-                var msg = MessageBox.Show("Вы дейтсвилеьно хотите удалить товар?", "Уведомление", MessageBoxButton.YesNo);
-                if (msg == MessageBoxResult.Yes)
+                
+                int id = Requestproduct.RequestId;
+                Request request = AptContext.aptContext.Requests.FirstOrDefault (r => r.Id == id);
+                if(request.User == null)
                 {
-                    int id = Requestproduct.RequestId;
-                    Request request = AptContext.aptContext.Requests.FirstOrDefault (r => r.Id == id);
-                    AptContext.aptContext.Remove(Requestproduct);                   
-                    AptContext.aptContext.SaveChanges();
-                    Requestproduct requestproduct = AptContext.aptContext.Requestproducts.FirstOrDefault(rp => rp.RequestId == id);
-                    MainWindow.Upd();
+                    var msg = MessageBox.Show("Вы дейтсвилеьно хотите удалить товар?", "Уведомление", MessageBoxButton.YesNo);
+                    if (msg == MessageBoxResult.Yes)
+                    {
+                        AptContext.aptContext.Remove(Requestproduct);                   
+                        AptContext.aptContext.SaveChanges();
+                        Requestproduct requestproduct = AptContext.aptContext.Requestproducts.FirstOrDefault(rp => rp.RequestId == id);
+                        MainWindow.Upd();
 
 
+                    }
                 }
             }
         }

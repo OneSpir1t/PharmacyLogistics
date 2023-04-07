@@ -106,11 +106,11 @@
                                     <Label Content="*Наименование:" FontSize="20"/>
                                     <TextBox Text="{Binding Path=Name}" Name="ProdName_TextBox" FontSize="20"/>
                                     <Label Content="*Форма выпуска:" FontSize="20"/>
-                                    <ComboBox DisplayMemberPath="Name" SelectedIndex="0" Name="ProdReleaseForm_Combobox" FontSize="20"/>
+                                    <ComboBox DisplayMemberPath="Name" SelectedIndex="0" Name="ProdReleaseForm_Combobox" FontSize="20" SelectionChanged="ProdReleaseForm_Combobox_SelectionChanged"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
                                     <Label Content="*Поставщик" FontSize="20"/>
-                                    <ComboBox DisplayMemberPath="Name" SelectedIndex="0" Name="ProdSupplier_Combobox" FontSize="20"/>
+                                    <ComboBox DisplayMemberPath="Name" SelectedIndex="0" Name="ProdSupplier_Combobox" FontSize="20" SelectionChanged="ProdSupplier_Combobox_SelectionChanged"/>
                                     <Label Content="Дозировка" FontSize="20"/>
                                     <TextBox Text="{Binding Path=Dose}" x:Name="ProdDose_TextBox" FontSize="20"/>
                                     <Label Content="*В упаковке:" FontSize="20"/>
@@ -170,11 +170,11 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
-                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="250"/>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <Button Visibility="Hidden" x:Name="CreateAkt_Button" Content="Сформировать документ" Grid.Column="2"/>
+                                <Button Visibility="Hidden" x:Name="CreateAkt_Button" Content="Сформировать документ" Grid.Column="2" Margin="5,5,5,5" Click="CreateAkt_Button_Click" Cursor="Hand"/>
                             </Grid>
                         </Grid>
                     </Grid>

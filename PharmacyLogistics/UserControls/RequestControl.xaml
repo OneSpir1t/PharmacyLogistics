@@ -11,7 +11,7 @@
             <Label x:Name="ReqId_Label" Content="Заявка №"/>
             <Label x:Name="ReqStatus_Label"/>
             <StackPanel Width="250" x:Name="Admin_Stackpanel" HorizontalAlignment="Center" Margin="5,0,0,0" Height="0">
-                <Label Content="Менеджер:"/>
+                <Label Content="Менеджер:" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <ComboBox SelectedIndex="0" Resources="{StaticResource materialDesign}" Name="ReqManager_Combobox" Width="150">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -25,6 +25,9 @@
                 </ComboBox>
                 <Button Resources="{StaticResource materialDesign}" Content="Назначить" x:Name="ReqAddManager_Button" Margin="5,10,5,0" Click="ReqAddManager_Button_Click"/>
             </StackPanel>
+            <Grid>
+                <CheckBox Name="AddToAkt_Checkbox" Content="Выбрать" HorizontalAlignment="Left" VerticalAlignment="Center" Click="AddToAkt_Checkbox_Click"/>
+            </Grid>
             <StackPanel x:Name="PharmacyManager_Stackpanel">
                 <Grid/>
                 <Button x:Name="ShowReqProd_Button" HorizontalAlignment="Center" Content="Cкрыть" Margin="5,5,5,5" Click="ShowReqProd_Button_Click"/>
