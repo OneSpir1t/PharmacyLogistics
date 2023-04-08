@@ -65,7 +65,7 @@ namespace PharmacyLogistics.UserControls
                 Request request = AptContext.aptContext.Requests.FirstOrDefault (r => r.Id == id);
                 if(request.User == null)
                 {
-                    var msg = MessageBox.Show("Вы дейтсвилеьно хотите удалить товар?", "Уведомление", MessageBoxButton.YesNo);
+                    var msg = MessageBox.Show("Вы дейтсвилеьно хотите удалить товар?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (msg == MessageBoxResult.Yes)
                     {
                         AptContext.aptContext.Remove(Requestproduct);                   

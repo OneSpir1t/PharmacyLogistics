@@ -21,7 +21,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Diagnostics;
-
 namespace PharmacyLogistics
 {
     /// <summary>
@@ -139,7 +138,7 @@ namespace PharmacyLogistics
         private void UpdateRequest()
         {
             displayRequest = AptContext.aptContext.Requests.ToList();
-            Request_ListView.Items.Clear();
+            Request_ListView.Items.Clear();           
             switch (SearchSort_Combobox.SelectedIndex)
             {
                 case 0:
@@ -165,19 +164,6 @@ namespace PharmacyLogistics
                 {
                     displayRequest = displayRequest.Where(r => r.PharmacyId.ToString().Contains(SearchReqPharmacy_TextBox.Text)).ToList();
                 }
-                if (displayRequest.Count > 0)
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Hidden;
-                    Request_ListView.Items.Clear();
-                    foreach (Request request in displayRequest)
-                    {
-                        Request_ListView.Items.Add(new RequestControl(request, User) { Width = GetNormalWidth() });
-                    }
-                }
-                else
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Visible;
-                }
             }
             if(User.UserRoleId == 2)
             {
@@ -197,18 +183,6 @@ namespace PharmacyLogistics
                 {
                     displayRequest = displayRequest.Where(r => r.PharmacyId.ToString().Contains(SearchReqPharmacy_TextBox.Text)).ToList();
                 }
-                if (displayRequest.Count > 0)
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Hidden;                   
-                    foreach (Request request in displayRequest)
-                    {
-                        Request_ListView.Items.Add(new RequestControl(request, User) { Width = GetNormalWidth() });
-                    }
-                }
-                else
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Visible;
-                }
             }
             if(User.UserRoleId == 3)
             {
@@ -221,20 +195,20 @@ namespace PharmacyLogistics
                     case 2:
                         displayRequest = displayRequest.Where(r => r.StatusId == 2).ToList();
                         break;
-                }
-                if (displayRequest.Count > 0)
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Hidden;
-                    foreach (Request request in displayRequest)
-                    {
-                        Request_ListView.Items.Add(new RequestControl(request, User) { Width = GetNormalWidth() });
-                    }
-                }
-                else
-                {
-                    NotFoundRequest_Label.Visibility = Visibility.Visible;
-                }
+                }               
                
+            }
+            if (displayRequest.Count > 0)
+            {
+                NotFoundRequest_Label.Visibility = Visibility.Hidden;
+                foreach (Request request in displayRequest)
+                {
+                    Request_ListView.Items.Add(new RequestControl(request, User) { Width = GetNormalWidth() });
+                }
+            }
+            else
+            {
+                NotFoundRequest_Label.Visibility = Visibility.Visible;
             }
         }
 
@@ -315,12 +289,13 @@ namespace PharmacyLogistics
                     product.Cost = Int32.Parse(ProdCost_TextBox.Text);
                     AptContext.aptContext.Add(product);
                     AptContext.aptContext.SaveChanges();
-                    MessageBox.Show("Товар успешно добавлен", "Уведомление");
+                    MessageBox.Show("Товар успешно добавлен", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                     BackToProd_Button_Click(sender, e);
                     UpdateProduct();
                 }
                 else
                 {
+                    MessageBox.Show("Товар успешно изменён", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                     currentProduct.Supplier = (Supplier)ProdSupplier_Combobox.SelectedItem;
                     currentProduct.ReleaseForm = (Releaseform)ProdReleaseForm_Combobox.SelectedItem;
                     AptContext.aptContext.SaveChanges();
@@ -372,7 +347,7 @@ namespace PharmacyLogistics
                 }
                 else
                 {
-                    MessageBox.Show("Товар содержится в Аптеках", "Уведомление");
+                    MessageBox.Show("Товар содержится в Аптеках", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
         }
@@ -471,19 +446,19 @@ namespace PharmacyLogistics
                     AptContext.aptContext.SaveChanges();
                     AddOrEditSupplier_Grid.DataContext = null;
                     UpdateSupplier_Comboboxes();
-                    MessageBox.Show("Поставщик успешно добавлен", "Уведомление");
+                    MessageBox.Show("Поставщик успешно добавлен", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
                     AptContext.aptContext.SaveChanges();
                     UpdateProduct();
                     UpdateSupplier_Comboboxes();
-                    MessageBox.Show("Поставщик успешно изменён", "Уведомление");
+                    MessageBox.Show("Поставщик успешно изменён", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             else
             {
-                MessageBox.Show("Заполните все поля", "Уведомление");
+                MessageBox.Show("Заполните все поля", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -493,14 +468,18 @@ namespace PharmacyLogistics
             Product product = AptContext.aptContext.Products.FirstOrDefault(p => p.Supplier == supplier );
             if (product == null)
             {
-                AptContext.aptContext.Remove(supplier);
-                AptContext.aptContext.SaveChanges();
-                UpdateSupplier_Comboboxes();
-                MessageBox.Show("Поставщик успешно удалён", "Уведомление");
+                var msg = MessageBox.Show("Вы действительно хотите удалить поставщика?", "Уведомление", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                if (msg == MessageBoxResult.Yes)
+                {
+                    AptContext.aptContext.Remove(supplier);
+                    AptContext.aptContext.SaveChanges();
+                    UpdateSupplier_Comboboxes();
+                    MessageBox.Show("Поставщик успешно удалён", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             else
             {
-                MessageBox.Show("У поставщика есть товары", "Уведомление");
+                MessageBox.Show("У поставщика есть товары", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
         }
@@ -655,25 +634,20 @@ namespace PharmacyLogistics
                                     request.Status = AptContext.aptContext.Statuses.FirstOrDefault(s => s.Id == 4);
                                     AptContext.aptContext.SaveChanges();
                                     requestproduct.Add(requests[i].Requestproducts.ElementAt(j));
-                                }
-
-                                
+                                }                               
                             }
                         }
                         for (int i = 0; i < requestproduct.Count; i++)
                         {   
                             for (int j = 1; j < requestproduct.Count; j++)
                             {
-
                                 if (requestproduct[i].Product == requestproduct[j].Product && i != j)
                                 {
                                     requestproduct[i].Amount = requestproduct[i].Amount + requestproduct[j].Amount;
                                     requestproduct.Remove(requestproduct[j]);
                                     i = 0; j = 0;
-                                }
-                                
-                            }      
-                            
+                                }                               
+                            }                                 
                         }
                         CreateDocument(requestproduct, path);
                     }                
@@ -779,6 +753,11 @@ namespace PharmacyLogistics
         private void ProdReleaseForm_Combobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void SearchReleaseForm_Combobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateProduct();            
         }
     }
 }

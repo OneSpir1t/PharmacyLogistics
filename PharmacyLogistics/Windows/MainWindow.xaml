@@ -21,7 +21,7 @@
                 <Label FontFamily="Segoe Print" Content="Поставщики:" HorizontalAlignment="Left" Margin="10,0,0,0" FontSize="20"/>
                 <ComboBox FontFamily="Segoe Print" Name="SearchSup_Combobox" Margin="10,10,10,10" FontSize="18" SelectionChanged="SearchSup_Combobox_SelectionChanged"/>
                 <Label FontFamily="Segoe Print" Margin="10,0,0,0" FontSize="20" Content="Форма выпуска"/>
-                <ComboBox FontFamily="Segoe Print" Name="SearchReleaseForm_Combobox"  Margin="10,10,10,10" FontSize="18"/>
+                <ComboBox FontFamily="Segoe Print" Name="SearchReleaseForm_Combobox"  Margin="10,10,10,10" FontSize="18" SelectionChanged="SearchReleaseForm_Combobox_SelectionChanged"/>
                 <Label FontFamily="Segoe Print" Content="По цене:" HorizontalAlignment="Left" FontSize="20" Margin="10,0,0,0"/>
                 <StackPanel Orientation="Horizontal">
                     <Label FontFamily="Segoe Print" Content="От:" FontSize="16"/>

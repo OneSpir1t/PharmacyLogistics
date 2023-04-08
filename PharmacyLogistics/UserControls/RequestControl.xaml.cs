@@ -143,7 +143,7 @@ namespace PharmacyLogistics.UserControls
             }
             else
             {
-                MessageBox.Show("В заявке нет товаров!", "Увдедолмение");
+                MessageBox.Show("В заявке нет товаров!", "Увдедолмение", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -154,13 +154,13 @@ namespace PharmacyLogistics.UserControls
                 Request.User = (User)ReqManager_Combobox.SelectedItem;
                 Request.Status = AptContext.aptContext.Statuses.FirstOrDefault(s => s.Id == 3);
                 AptContext.aptContext.SaveChanges();
-                MessageBox.Show("Менеджер назначен", "Уведомление");
+                MessageBox.Show("Менеджер назначен", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
                 Request.User = null;
                 AptContext.aptContext.SaveChanges();
-                MessageBox.Show("Менеджер не назначен", "Уведомление");
+                MessageBox.Show("Менеджер не назначен", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

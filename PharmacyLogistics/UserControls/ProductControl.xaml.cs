@@ -135,7 +135,7 @@ namespace PharmacyLogistics.UserControls
                     requestproduct.Amount = 1;
                     AptContext.aptContext.Add(requestproduct);
                     AptContext.aptContext.SaveChanges();
-                    MessageBox.Show("Товар добавлен в заявку", "Уведомление");
+                    MessageBox.Show("Товар добавлен в заявку", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                     MainWindow.Upd();
                 }
                 else
@@ -146,7 +146,7 @@ namespace PharmacyLogistics.UserControls
             }
             else
             {
-                var msg = MessageBox.Show("У вас нет открытой заявки, хотите открыть новую?", "Уведомление", MessageBoxButton.YesNo);
+                var msg = MessageBox.Show("У вас нет открытой заявки, хотите открыть новую?", "Уведомление", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if(msg == MessageBoxResult.Yes)
                 {
                     Request request = new Request();
@@ -161,7 +161,7 @@ namespace PharmacyLogistics.UserControls
                     AptContext.aptContext.Add(request);
                     AptContext.aptContext.Add(requestproduct);
                     AptContext.aptContext.SaveChanges();
-                    MessageBox.Show("Товар успешно добавлен в заявку");
+                    MessageBox.Show("Товар успешно добавлен в заявку", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information);
                     MainWindow.Upd();
                     
                 }
