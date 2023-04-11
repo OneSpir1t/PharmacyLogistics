@@ -23,6 +23,7 @@ namespace PharmacyLogistics.UserControls
     {
         Requestproduct Requestproduct { get; set; }
         private static RequestProductControl RPC { get; set; }
+        bool flag = true;
         public RequestProductControl(Requestproduct requestproduct)
         {
             RPC = this;
@@ -36,7 +37,7 @@ namespace PharmacyLogistics.UserControls
             ReqProduct_Label.Content = string.Join(" ", Requestproduct.Product.Article, Requestproduct.Product.Name,
             Requestproduct.Product.ReleaseForm.Name, Requestproduct.Product.Dose, Requestproduct.Product.Quantityinthepackage + " шт.");
             Request request = AptContext.aptContext.Requests.FirstOrDefault(r => r.Id == Requestproduct.RequestId);
-            if (request.StatusId > 3)
+            if (request.StatusId == 2 || request.StatusId > 3 && request.User != null)
             {
                 MinusAmount_Button.Visibility = Visibility.Hidden;
                 PlusAmount_Button.Visibility = Visibility.Hidden;
@@ -52,7 +53,15 @@ namespace PharmacyLogistics.UserControls
 
         private void MinusAmount_Button_Click(object sender, RoutedEventArgs e)
         {
-            int a = Int32.Parse(Amount_TextBox.Text);
+            int a;
+            if (Amount_TextBox.Text.Length > 0)
+            {
+                a = Int32.Parse(Amount_TextBox.Text);
+            }
+            else 
+            {
+                a = 1;
+            }
             if (a > 1)
             {
                 a = a - 1;
@@ -71,7 +80,7 @@ namespace PharmacyLogistics.UserControls
                         AptContext.aptContext.Remove(Requestproduct);                   
                         AptContext.aptContext.SaveChanges();
                         Requestproduct requestproduct = AptContext.aptContext.Requestproducts.FirstOrDefault(rp => rp.RequestId == id);
-                        MainWindow.Upd();
+                        UserWindow.Upd();
 
 
                     }
@@ -81,7 +90,16 @@ namespace PharmacyLogistics.UserControls
 
         private void PlusAmount_Button_Click(object sender, RoutedEventArgs e)
         {
-            int a = Int32.Parse(Amount_TextBox.Text);
+            int a;
+            if(Amount_TextBox.Text.Length > 0)
+            {
+                
+                a = Int32.Parse(Amount_TextBox.Text);
+            }
+            else
+            {
+                a = 0;
+            }
             if (a < 99)
             {
                 a = a + 1;
@@ -92,8 +110,32 @@ namespace PharmacyLogistics.UserControls
 
         private void Amount_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Requestproduct.Amount = Int32.Parse(Amount_TextBox.Text);
-            AptContext.aptContext.SaveChanges();
+            if(Amount_TextBox.Text.Length > 0)
+            {
+                bool ckeck = Int32.TryParse(Amount_TextBox.Text, out int num);
+                if (ckeck && Amount_TextBox.Text != "0" && Amount_TextBox.Text != "00")
+                {
+                    Requestproduct.Amount = Int32.Parse(Amount_TextBox.Text);
+                }
+                else
+                {
+                    Amount_TextBox.Text = default;
+                }
+                AptContext.aptContext.SaveChanges();
+            }
+            
+        }
+
+        private void Amount_TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if(Amount_TextBox.Text.Length == 0 &&  e.Text == "0")
+            {
+                e.Handled = true;
+            }
+            else
+            {
+                e.Handled = "0123456789".IndexOf(e.Text) < 0;
+            }
         }
     }
 }

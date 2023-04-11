@@ -24,7 +24,7 @@
                     <StackPanel x:Name="EditReqProd_StackPanel" Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
 
                         <Button x:Name="MinusAmount_Button" Width="40" Content="-"  FontWeight="Bold" Click="MinusAmount_Button_Click"/>
-                        <TextBox materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden" Resources="{StaticResource materialDesign}" x:Name="Amount_TextBox" Width="40" MaxLength="3" Margin="5,10,5,10" TextChanged="Amount_TextBox_TextChanged" />
+                        <TextBox materialDesign:TextFieldAssist.CharacterCounterVisibility="Hidden" Resources="{StaticResource materialDesign}" x:Name="Amount_TextBox" Width="40" MaxLength="2" Margin="5,10,5,10" TextChanged="Amount_TextBox_TextChanged" PreviewTextInput="Amount_TextBox_PreviewTextInput" />
                         <Button x:Name="PlusAmount_Button" Width="40" Content="+" Click="PlusAmount_Button_Click" />
                     </StackPanel>
                 </Grid>

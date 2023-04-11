@@ -69,7 +69,7 @@ namespace PharmacyLogistics.Windows
                         Password_PasswordBox.Password = "";
                         Password_TextBox.Text = default;
                         MessageBox.Show($"Вы вошли как {user.UserRole.Name.ToLower()}, добро пожаловать, {string.Join(' ', user.Surname, user.Name, user.Patryonomic)}", "Успешно");
-                        var mw = new MainWindow(user);
+                        var mw = new UserWindow(user);
                         mw.Owner = this;
                         mw.Show();
                         

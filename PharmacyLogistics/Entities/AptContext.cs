@@ -143,6 +143,8 @@ namespace PharmacyLogistics.Entities
             {
                 entity.ToTable("product");
 
+                entity.HasIndex(e => e.ManufacturerId, "FK_Product_Manufacturer_idx");
+
                 entity.HasIndex(e => e.ReleaseFormId, "FK_Product_ReleaseForm");
 
                 entity.HasIndex(e => e.SupplierId, "FK_Product_Supplier");
@@ -153,6 +155,8 @@ namespace PharmacyLogistics.Entities
 
                 entity.Property(e => e.Dose).HasMaxLength(120);
 
+                entity.Property(e => e.ManufacturerId).HasColumnName("ManufacturerID");
+
                 entity.Property(e => e.Name).HasMaxLength(150);
 
                 entity.Property(e => e.Quantityinthepackage).HasColumnName("quantityinthepackage");
@@ -160,6 +164,12 @@ namespace PharmacyLogistics.Entities
                 entity.Property(e => e.ReleaseFormId).HasColumnName("ReleaseFormID");
 
                 entity.Property(e => e.SupplierId).HasColumnName("SupplierID");
+
+                entity.HasOne(d => d.Manufacturer)
+                    .WithMany(p => p.Products)
+                    .HasForeignKey(d => d.ManufacturerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Product_Manufacturer");
 
                 entity.HasOne(d => d.ReleaseForm)
                     .WithMany(p => p.Products)

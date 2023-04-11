@@ -18,8 +18,10 @@ namespace PharmacyLogistics.Entities
         public string? Dose { get; set; }
         public int Cost { get; set; }
         public int Quantityinthepackage { get; set; }
-        public string Name { get; set; } = null!;
+        public string? Name { get; set; }
+        public int ManufacturerId { get; set; }
 
+        public virtual Manufacturer Manufacturer { get; set; } = null!;
         public virtual Releaseform ReleaseForm { get; set; } = null!;
         public virtual Supplier Supplier { get; set; } = null!;
         public virtual ICollection<Pharmacyproduct> Pharmacyproducts { get; set; }

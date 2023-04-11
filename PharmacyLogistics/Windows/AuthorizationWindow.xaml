@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PharmacyLogistics.Windows"
         mc:Ignorable="d"
-        Title="AuthorizationWindow" Height="250" Width="400">
+        Title="PharmacyLogistics" Height="250" Width="400">
     <Grid>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" MinWidth="100" Width="250">
             <Grid>
