@@ -28,10 +28,6 @@ namespace PharmacyLogistics.Windows
             {
                 AptContext.aptContext.Database.OpenConnection();
             }
-            Login_TextBox.Text = "Valeriya@mail.ru";
-            Password_PasswordBox.Password = "VH5#s";
-            //Login_TextBox.Text = "2";
-            //Password_PasswordBox.Password = "2";
         }
 
         private string? password;

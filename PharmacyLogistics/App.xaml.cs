@@ -25,8 +25,8 @@ namespace PharmacyLogistics
 
         static void MyHandler (object sender, UnhandledExceptionEventArgs args)
         {
-            //Application.Current.Shutdown();
-            //WinForms.Application.Restart();
+            Application.Current.Shutdown();
+            WinForms.Application.Restart();
             //System.Diagnostics.Process.Start(location);          
             //Exception e = (Exception)args.ExceptionObject;          
             //MessageBox.Show(e.Message + $"  {location}");
